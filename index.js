@@ -1,6 +1,7 @@
 exports.renderTemplate = renderTemplate
 exports.compileTemplate = compileTemplate
 exports.copyProps = copyProps
+exports.getFromContext = getFromContext
 
 var _reString = '("([^"\\\\]|\\\\.)*")'
 var _reAttribute = '([a-zA-Z0-9_]+='  + _reString +  ')'
@@ -42,6 +43,18 @@ function compileTemplate(text) {
   var lastTextIndex = lastResult ? (lastResult.index + lastResult[0].length) : 0
   currentNode.parts.push(text.slice(lastTextIndex))
   return currentNode
+}
+
+function getFromContext(context, nameVar) {
+  if (!has(context, nameVar)) throw new Error('no own property '+JSON.stringify(nameVar))
+  var name = context[nameVar].split('.')
+    , part
+    , obj = context
+  while ((part = name.shift()) != null) {
+    if (!has(obj, part)) throw new Error('no own property '+JSON.stringify(part))
+    obj = obj[part]
+  }
+  return obj
 }
 
 function renderTemplate(template, functions, context, chunk, done) {
@@ -92,9 +105,10 @@ function renderTemplate(template, functions, context, chunk, done) {
       copyProps(childContext, context)
     }
     contextOverwrite(childContext, part.args)
+    if (part.parts) childContext.$block = part
     if (part.type != null) {
+      if (!has(functions, part.type)) throw new Error('unknown function "'+part.type+'"')
       var fn = functions[part.type]
-      if (fn == null) throw new Error('unknown function "'+part.type+'"')
       fn(part, functions, childContext, gotChunk.bind(null, i), partComplete.bind(null, i))
     } else {
       renderTemplate(part, functions, childContext, gotChunk.bind(null, i), partComplete.bind(null, i))
@@ -112,6 +126,10 @@ function contextOverwrite(context, source) {
   source.forEach(function(e) {
     context[e.name] = e.value
   })
+}
+
+function has(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
 // console.log(JSON.stringify(compileTemplate('abc{foo}def{bar qux="5"}ghi')))

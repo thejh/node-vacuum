@@ -1,10 +1,9 @@
 var vacuum = require('./')
 
 exports.foreach = function FOREACH(template, functions, context, chunk, done) {
-  if (context.list == null) throw new Error('"list" value is necessary')
   if (context.element == null) throw new Error('"element" value is necessary')
   
-  var list = context[context.list]
+  var list = vacuum.getFromContext(context, 'list')
   if (!Array.isArray(list)) throw new Error('context[context.list] is not an array (context['+JSON.stringify(context.list)+'] is a '+(typeof list)+')')
   
   var templateCopy = {}
@@ -28,10 +27,16 @@ exports.foreach = function FOREACH(template, functions, context, chunk, done) {
 }
 
 exports.var = function VAR(template, functions, context, chunk, done) {
-  if (typeof context.name !== 'string') throw new Error('context.name must be a string')
-  var value = context[context.name]
-  if (value == null) throw new Error('specified variable ("'+context.name+'") not found')
-  
+  var value = vacuum.getFromContext(context, 'name')
   chunk(value)
   done()
+}
+
+exports.childblock = function CHILDBLOCK(_, functions, context, chunk, done) {
+  var template = {}
+  vacuum.copyProps(template, context.$block)
+  delete template.type
+  if (!template.parts) throw new Error('template must have "parts", only has '+Object.keys(template).join(','))
+  
+  vacuum.renderTemplate(template, functions, context, chunk, done)
 }
