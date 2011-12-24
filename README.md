@@ -69,6 +69,36 @@ The body of the inclusion becomes a template which is given to `document`'s cont
 `document` can then do things with it - it could e.g. call it multiple times with different contexts.
 However, here it's only used with the `{childblock}` default template function.
 
+
+Making your own template functions
+==================================
+
+You can make your own template functions by attaching them to `renderTemplate`:
+
+```js
+renderTemplate.connection = function CONNECTION(template, functions, context, chunk, done) {
+  var connection = vacuum.getFromContext(context, 'name')
+  var address = connection.remoteAddress
+  chunk(address+':'+connection.remotePort)
+  done()
+}
+```
+
+As you can see, there are five parameters.
+
+`template` is a code representation of the tag used to
+reference this template. If the tag has a body, that body is stored in the `parts` property of
+`template`.
+
+`functions` is the same as your `renderTemplate`.
+
+`context` is the context (a modified copy of the context of the template inclusions parent).
+
+`chunk` is the function used to write rendered data as a string. It takes one argument.
+
+`done` is a normal callback - call it without arguments for success (after you've finished all
+calls to `chunk`), call it with an error if an error occurs.
+
 Default functions
 =================
 You can make your own template functions, but there are also some defaults:
