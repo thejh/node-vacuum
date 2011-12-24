@@ -1,6 +1,7 @@
 exports.renderTemplate = renderTemplate
 exports.compileTemplate = compileTemplate
 exports.copyProps = copyProps
+exports.loadSync = require('./loader').loadSync
 exports.getFromContext = getFromContext
 
 var _reString = '("([^"\\\\]|\\\\.)*")'
