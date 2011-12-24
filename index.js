@@ -1,5 +1,6 @@
 exports.renderTemplate = renderTemplate
 exports.compileTemplate = compileTemplate
+exports.copyProps = copyProps
 
 var _reString = '("([^"\\\\]|\\\\.)*")'
 var _reAttribute = '([a-zA-Z0-9_]+='  + _reString +  ')'

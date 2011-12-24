@@ -5,12 +5,23 @@ exports.foreach = function FOREACH(template, functions, context, chunk, done) {
   if (context.element == null) throw new Error('"element" value is necessary')
   
   var list = context[context.list]
-  if (!Array.isArray(list)) throw new Error('context[context.list] is not an array')
+  if (!Array.isArray(list)) throw new Error('context[context.list] is not an array (context['+JSON.stringify(context.list)+'] is a '+(typeof list)+')')
   
-  vacuum.renderTemplate({parts: repeat(template, list.length)}, functions, context, chunk, done)
+  var templateCopy = {}
+  vacuum.copyProps(templateCopy, template)
+  delete templateCopy.type
+  
+  var contexts = list.map(function(element) {
+    var copy = {}
+    vacuum.copyProps(copy, context)
+    copy[context.element] = element
+    return copy
+  })
+  
+  vacuum.renderTemplate({parts: repeat(templateCopy, list.length)}, functions, contexts, chunk, done)
   
   function repeat(value, count) {
-    var arr = new Array(count)
+    var arr = []
     while (count--) arr.push(value)
     return arr
   }
