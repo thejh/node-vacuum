@@ -38,7 +38,7 @@ The template files are normal HTML with some special-syntax tags inside. Example
     </html>
 
 This could be a HTML document template. It only contains bodyless special tags, the syntax for them is
-`{tagName key1="value1" key2="value2" ...}`. The tag name determines which template should be inserted.
+```js {tagName key1="value1" key2="value2" ...}```. The tag name determines which template should be inserted.
 There are two kinds of templates:
 
  - template files (like this one)
@@ -46,11 +46,11 @@ There are two kinds of templates:
 
 Template functions are JS functions that can be used inside of templates. Because of them, there's
 something called "context". In the `renderTemplate` example above, the initial context is
-`{articleID: articleID, title: articleTitle}`, but context can also be changed by template functions - however, these changes
+```js {articleID: articleID, title: articleTitle}```, but context can also be changed by template functions - however, these changes
 only affect descendants of that template function. Attributes also change the context - in the
-HTML template above, the `{var name="title"}` inclusion calls the `var` template with the context
-`{articleID: articleID, title: articleTitle, name: 'title'}`. The `var` template then does (this is
-somewhat simplified) `chunk(context[context.name]); done()`.
+HTML template above, the ```js {var name="title"}``` inclusion calls the `var` template with the context
+```js {articleID: articleID, title: articleTitle, name: 'title'}`. The `var` template then does (this is
+somewhat simplified) ```js chunk(context[context.name]); done()```.
 
 Here's an example that uses the HTML template defined above:
 
@@ -61,7 +61,7 @@ Here's an example that uses the HTML template defined above:
 This example contains an inclusion with body - it has an opening tag with `#` and a closing tag with `/`.
 The body of the inclusion becomes a template which is given to `document`'s context as `$block`.
 `document` can then do things with it - it could e.g. call it multiple times with different contexts.
-However, here it's only used with the `{childblock}` default template function.
+However, here it's only used with the ```js {childblock}``` default template function.
 
 Default functions
 =================
