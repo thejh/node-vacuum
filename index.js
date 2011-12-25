@@ -100,7 +100,7 @@ function renderTemplate(template, functions, context, chunk, done) {
   template.parts.forEach(function(part, i) {
     if (typeof part !== 'object') return
     var childContext = {}
-    if (typeof context === 'array') {
+    if (Array.isArray(context)) {
       copyProps(childContext, context[i])
     } else {
       copyProps(childContext, context)
