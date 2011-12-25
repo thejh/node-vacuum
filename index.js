@@ -52,7 +52,14 @@ function getFromContext(context, nameVar) {
     , part
     , obj = context
   while ((part = name.shift()) != null) {
-    if (!has(obj, part)) throw new Error('no own property '+JSON.stringify(part))
+    if (!has(obj, part))
+      throw new Error('no own property '+JSON.stringify(part)+
+                      (typeof obj === 'object' ?
+                        (', only '+Object.keys(obj).join())
+                      :
+                        (', its a '+typeof obj)
+                      )
+                     )
     obj = obj[part]
   }
   return obj
