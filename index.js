@@ -5,9 +5,10 @@ exports.loadSync = require('./loader').loadSync
 exports.getFromContext = getFromContext
 
 var _reString = '("([^"\\\\]|\\\\.)*")'
-var _reAttribute = '([a-zA-Z0-9_]+='  + _reString +  ')'
+var _reAttribute = '(?:([a-zA-Z0-9_]+)='  + _reString +  ')'
 var _reTag = '{([#/]?)([a-zA-Z0-9_]+)((\\s+'  + _reAttribute +  ')*)\\s*}'
 var tagRegex = new RegExp(_reTag, 'g')
+var argRegex = new RegExp(_reAttribute, 'g')
 
 function compileTemplate(text) {
   var reResult
@@ -15,6 +16,7 @@ function compileTemplate(text) {
     , parents = []
     , currentNode = {parts: []}
     , i = 0
+  // WARNING: DO NOT BREAK FROM THIS LOOP OR THE exec()==null WILL GET YOU THE NEXT TIME!
   while (reResult = tagRegex.exec(text)) {
     currentNode.parts.push(text.slice(i, reResult.index))
     i = reResult.index + reResult[0].length
@@ -28,12 +30,10 @@ function compileTemplate(text) {
       currentNode = parent
       continue
     }
-    var argmap = argsstr.split(/\s+/).filter(function(argStr) {
-      return argStr.indexOf('=') !== -1
-    }).map(function(argStr) {
-      var parts = argStr.split('=')
-      return {name: parts[0], value: JSON.parse(parts.slice(1).join('='))}
-    })
+    var argmap = [], argReResult
+    while (argReResult = argRegex.exec(argsstr)) {
+      argmap.push({name: argReResult[1], value: JSON.parse(argReResult[2])})
+    }
     if (flags === '#') {
       parents.push(currentNode)
       currentNode = {type: tagtype, args: argmap, parts: []}
