@@ -34,7 +34,8 @@ exports.var = function VAR(template, functions, context, chunk, done) {
 
 exports.childblock = function CHILDBLOCK(_, functions, context, chunk, done) {
   var template = {}
-  vacuum.copyProps(template, context.$block)
+  if (!context.of) throw new Error('context must have "of"')
+  vacuum.copyProps(template, context['$block_'+context.of])
   delete template.type
   if (!template.parts) throw new Error('template must have "parts", only has '+Object.keys(template).join(','))
   

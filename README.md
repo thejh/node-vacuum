@@ -38,7 +38,7 @@ The template files are normal HTML with some special-syntax tags inside. Example
     </title>
   </head>
   <body>
-    {childblock}
+    {childblock of="document"}
   </body>
 </html>
 ```
@@ -118,4 +118,5 @@ This prints the value from the variable whose name is stored in `name`.
 
 childblock
 ----------
-This takes the template stored in `$block` on the context and renders it.
+This takes the template stored in `$block_<of>` on the context and renders it. It needs a `of` context variable that specifies
+the template from whose inclusion the child block should come.

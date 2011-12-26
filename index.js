@@ -113,9 +113,9 @@ function renderTemplate(template, functions, context, chunk, done) {
       copyProps(childContext, context)
     }
     contextOverwrite(childContext, part.args)
-    if (part.parts) childContext.$block = part
     if (part.type != null) {
       if (!has(functions, part.type)) throw new Error('unknown function "'+part.type+'"')
+      if (part.parts) childContext['$block_'+part.type] = part
       var fn = functions[part.type]
       fn(part, functions, childContext, gotChunk.bind(null, i), partComplete.bind(null, i))
     } else {
