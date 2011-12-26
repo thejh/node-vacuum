@@ -46,13 +46,14 @@ function compileTemplate(text) {
   return currentNode
 }
 
-function getFromContext(context, nameVar) {
+function getFromContext(context, nameVar, permissive) {
   if (!has(context, nameVar)) throw new Error('no own property '+JSON.stringify(nameVar))
   var name = context[nameVar].split('.')
     , part
     , obj = context
   while ((part = name.shift()) != null) {
-    if (!has(obj, part))
+    if (!has(obj, part)) {
+      if (permissive) return void 0
       throw new Error('no own property '+JSON.stringify(part)+
                       (typeof obj === 'object' ?
                         (', only '+Object.keys(obj).join())
@@ -60,6 +61,7 @@ function getFromContext(context, nameVar) {
                         (', its a '+typeof obj)
                       )
                      )
+    }
     obj = obj[part]
   }
   return obj
