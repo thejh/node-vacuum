@@ -32,8 +32,15 @@ function load(path) {
     var fn = functions[name]
     if (chunk.write && chunk.end && chunk.writeHead) {
       var response = chunk
+      var chunks = []
       chunk = function writeTemplateChunkToHTTP(chunk) {
-        response.write(chunk)
+        if (chunks.length === 0) {
+          process.nextTick(function() {
+            response.write(chunks.join(''))
+            chunks = []
+          })
+        }
+        chunks.push(chunk)
       }
       done = function(err) {
         if (err) {
