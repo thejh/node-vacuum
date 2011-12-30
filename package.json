@@ -3,7 +3,7 @@
   "name": "vacuum",
   "description": "Clean streamed templates (primarily for HTML)",
   "tags": ["template", "templates", "stream"],
-  "version": "0.1.2",
+  "version": "0.1.3",
   "homepage": "https://github.com/thejh/node-vacuum",
   "repository": {
     "type": "git",
