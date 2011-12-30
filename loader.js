@@ -28,6 +28,7 @@ function loadFolder(folderName, functions) {
 
 function load(path) {
   var functions = function renderByName(name, context, chunk, done) {
+    var starttime = Date.now()
     if (!{}.hasOwnProperty.call(functions, name)) throw new Error('template '+JSON.stringify(name)+' not found')
     var fn = functions[name]
     if (chunk.write && chunk.end && chunk.writeHead) {
@@ -36,8 +37,10 @@ function load(path) {
       chunk = function writeTemplateChunkToHTTP(chunk) {
         if (chunks.length === 0) {
           process.nextTick(function() {
-            response.write(chunks.join(''))
-            chunks = []
+            if (chunks) {
+              response.write(chunks.join(''))
+              chunks = []
+            }
           })
         }
         chunks.push(chunk)
@@ -51,7 +54,8 @@ function load(path) {
           console.error('Error during template rendering:'+err)
           chunk = done = function(){}
         } else {
-          response.end()
+          response.end(chunks.join('')+'\n<!-- RENDER TIME: '+(Date.now()-starttime)+'ms -->')
+          chunks = null
         }
       }
       response.writeHead(200, 'let me render that template for you...',
