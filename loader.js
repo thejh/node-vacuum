@@ -37,8 +37,11 @@ function load(path) {
       }
       done = function(err) {
         if (err) {
-          response.end('<<<<[[[[(((( AN ERROR OCCURED, RENDERING TERMINATED ))))]]]]>>>>')
-          console.error('Error during template rendering:'+(err.stack || err))
+          try {
+            err = JSON.stringify(err.stack || err)
+          } catch(jsonerr) {}
+          response.end('<<<<[[[[(((( AN ERROR OCCURED, RENDERING TERMINATED ))))]]]]>>>><br>\n'+err)
+          console.error('Error during template rendering:'+err)
           chunk = done = function(){}
         } else {
           response.end()
